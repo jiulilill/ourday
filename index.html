@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>我们的纪念日</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        /* ===== 全局样式 ===== #E7F2F2, #E7F2F2, #C0E6E6,#A0DBDB,
+        #76C4C4, #4BB3B3,#3C9A9A,#2B7F7F,#1B6464*/
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: "Microsoft YaHei", sans-serif;
+            text-align: center;
+            color: #edeff8;
+            /* 七彩渐变背景 */
+            background: linear-gradient(270deg,   #FFE0B2,
+            #FFCCBC,#FFCDD2,#F8BBD0,#E1BEE7,#BBDEFB,#B3E5FC
+            );
+            background-size: 1600% 1600%;
+            animation: rainbow 30s ease infinite;
+            z-index: -1000;   /* ★★★★★ 背景永远置底 */
+        }
+
+        /* 七彩背景动画 */
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* 一行排布 + 居中 */
+        #love-line {
+            margin-top: 24vh;
+            font-size: 4vw;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2vw;
+            text-shadow: 0 0 20px rgba(161, 37, 174, 0.9);
+        }
+
+        /* 爱心样式 */
+        /* love-line 整体布局 */
+        #love-line {
+            margin-top: 24vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            gap: 2vw;
+            text-shadow: 0 0 20px rgba(161, 37, 174, 0.9);
+
+            /* 让行的基线高度更稳定 */
+            line-height: 1;
+        }
+
+        /* 强制统一所有 span 的对齐方式 */
+        #love-line span {
+            display: flex;
+            align-items: center;   /* 垂直居中 */
+            justify-content: center;
+            line-height: 1;        /* 消除字体基线差 */
+        }
+
+        /* ❤️ 左右爱心 */
+        #love-line .heart {
+            font-size: 6vw;   /* 稍微增大，美观 */
+            animation: heartbeat 1.6s infinite ease-in-out;
+
+            /* 修正 emoji 在手机端的垂直偏移 */
+            position: relative;
+            top: -0.5vw;      /* ★★★ 绝对关键：视觉矫正 */
+        }
+
+        /* “我们相恋了”“天” */
+        #love-line .text {
+            font-size: 5vw;
+            font-weight: 500;
+        }
+
+        /* 相恋天数数字（更大，更显眼） */
+        #love-line .number {
+            font-size: 10vw;
+            font-weight: 700;
+            color: #ff6b81;
+
+            animation: numberBeat 1.8s infinite ease-in-out;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 让内部每个元素都成为小 Flex，实现真正垂直居中 */
+        #love-line span {
+            display: flex;
+            align-items: center;   /* 垂直居中 */
+            justify-content: center;
+            line-height: 1;        /* 消除字体差异导致的偏移 */
+        }
+
+        /* 爱心跳动（更柔和版本） */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.25); }
+            60% { transform: scale(1); }
+            100% { transform: scale(1.15); }
+        }
+
+        /* 数字跳动动画（更柔和） */
+        @keyframes numberBeat {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+
+        /* 写给男朋友的话 */
+        #message {
+            position: fixed;
+            right: 3vw;
+            bottom: 3vh;
+
+            max-width: 60vw;
+            font-size: 2vw;
+            color: #f1dada;
+            text-align: right;
+
+            opacity: 0.9;
+            line-height: 1.4;
+            text-shadow: 0 0 10px rgba(161, 37, 174, 0.9);
+
+            z-index: 5; /* 确保不被泡泡/樱花遮挡 */
+        }
+
+        /* 下次纪念日倒计时 */
+        #countdown {
+            margin-top: 20px;
+            font-size: 4vw;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(161, 37, 174, 0.9);
+        }
+        .music {
+            position: fixed;
+            top: 2vh;      /* 距离顶部 2% 屏幕高度 */
+            left: 2vw;     /* 距离左边 2% 屏幕宽度 */
+            z-index: 200;
+        }
+
+        /* 左上角音乐 */
+        .music button {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(193, 182, 182, 0.25);
+            backdrop-filter: blur(6px);
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255,255,255,0.6);
+            transition: 0.3s;
+        }
+
+        .music button:hover {
+            transform: scale(1.15);
+            background: rgba(255,255,255,0.45);
+        }
+        /* 播放时旋转 */
+        .music button.playing {
+            animation: rotateBtn 2.5s linear infinite;
+        }
+
+        /* 旋转关键帧 */
+        @keyframes rotateBtn {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+        /* ========= 泡泡效果 ========= */
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.55;
+            z-index: 10;   /* ★★★ 关键修复点 */
+            animation: floatUp linear infinite, colorChange 5s infinite;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.3); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+        }
+        @keyframes colorChange {
+            0% { background: rgb(164, 216, 225); }
+            50% { background: rgb(120, 196, 222); }
+            100% { background: rgb(56, 162, 210); }
+        }
+
+        /* ========= 落樱效果 ========= */
+        .sakura {
+            position: fixed;
+            top: -10vh;
+            width: 12px;
+            height: 12px;
+            background: #ea93a1;
+            border-radius: 50% 70% 50% 70%;
+            opacity: 0.9;
+            z-index: 20;
+            animation: fall 6s linear infinite, fadeOut 6s ease-in forwards;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); }
+            100% { transform: translateY(120vh) translateX(20vw) rotate(360deg); }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 0.95; }
+            70% { opacity: 0.4; }
+            100% { opacity: 0; }
+        }
+
+        /* 点击爱心动画 */
+        .click-heart {
+            position: fixed;
+            color: #ff5f9e;
+            font-size: 30px;
+            pointer-events: none;
+            z-index: 99999;
+            animation: clickHeart 1s ease-out forwards;
+        }
+
+        @keyframes clickHeart {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.8); opacity: 0.9; }
+            100% { transform: translateY(-80px) scale(0.5); opacity: 0; }
+        }
+
+
+    </style>
+</head>
+<body>
+
+<!-- 自动播放音乐 -->
+<div class="music">
+    <audio id="bgm" autoplay loop playsinline>
+        <source src="yuai.mp3" type="audio/mp3">
+    </audio>
+    <button onclick="toggleMusic()">🎧</button>
+</div>
+
+
+
+
+<div id="love-line">
+    <span class="heart">❤️</span>
+    <span class="text">我们相恋了</span>
+    <span id="days" class="number">0</span>
+    <span class="text">天</span>
+    <span class="heart">❤️</span>
+</div>
+
+
+<!-- 甜蜜的话 -->
+<div id="message">愿我们走过的每一天，都比昨天更相爱。</div>
+
+<!-- 下次纪念日倒计时 -->
+<div id="countdown">距离下一次纪念日还有 0 天</div>
+
+<script>
+    // ========== 恋爱开始日期（请自行修改）==========
+    const startDate = new Date("2025-11-01");
+
+    // ========== 计算相恋天数 ==========
+    function updateDays() {
+        let now = new Date();
+        let diff = now - startDate;
+        let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById("days").innerHTML = days ;
+    }
+    setInterval(updateDays, 1000);
+    updateDays();
+
+
+    // ========== 下次纪念日倒计时（按周年） ==========
+    function updateCountdown() {
+        let now = new Date();
+        let year = now.getFullYear();
+
+        // 本年度纪念日
+        let next = new Date(year + "-11-01");
+
+        // 如果今年已经过了，就算明年
+        if (now > next) next = new Date((year + 1) + "-11-01");
+
+        let diff = next - now;
+        let days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+        document.getElementById("countdown").innerHTML =
+            "距离下一次纪念日还有 " + days + " 天";
+    }
+    setInterval(updateCountdown, 1000 * 60 * 30);
+    updateCountdown();
+
+
+    // ========== 泡泡 ==========
+    function createBubble() {
+        const bubble = document.createElement("div");
+        bubble.classList.add("bubble");
+
+        let size = Math.random() * 40 + 20;
+        bubble.style.width = size + "px";
+        bubble.style.height = size + "px";
+        bubble.style.left = Math.random() * window.innerWidth + "px";
+        bubble.style.animationDuration = (Math.random() * 6 + 6) + "s";
+
+        document.body.appendChild(bubble);
+
+        setTimeout(() => bubble.remove(), 12000);
+    }
+    setInterval(createBubble, 350);
+
+
+    // ========== 落樱 ==========
+    function createSakura() {
+        const sakura = document.createElement("div");
+        sakura.classList.add("sakura");
+
+        sakura.style.left = Math.random() * window.innerWidth + "px";
+        sakura.style.animationDuration = (Math.random() * 5 + 5) + "s";
+        sakura.style.opacity = Math.random() * 0.6 + 0.4;
+        sakura.style.transform = "rotate(" + Math.random()*360 + "deg)";
+
+        document.body.appendChild(sakura);
+        setTimeout(() => sakura.remove(), 12000);
+    }
+    setInterval(createSakura, 250);
+
+    // 点击出现小爱心
+    document.addEventListener("click", function (e) {
+        let heart = document.createElement("div");
+        heart.className = "click-heart";
+        heart.innerText = "❤️";
+        heart.style.left = (e.clientX - 10) + "px";
+        heart.style.top = (e.clientY - 10) + "px";
+        document.body.appendChild(heart);
+
+        setTimeout(() => heart.remove(), 1000);
+    });
+
+    // ========== 自动播放音乐（移动端需要触摸触发） ==========
+    // 自动播放时自动旋转按钮（PC 可用）
+    window.addEventListener("load", () => {
+        const audio = document.getElementById("bgm");
+        const btn = document.querySelector(".music button");
+
+        setTimeout(() => {
+            if (!audio.paused) {
+                btn.classList.add("playing");
+            }
+        }, 500);
+    });
+
+    // 移动端自动播放触发（第一次触摸时）
+    document.addEventListener("touchstart", () => {
+        const audio = document.getElementById("bgm");
+        const btn = document.querySelector(".music button");
+
+        if (audio.paused) {
+            audio.play();
+        }
+        btn.classList.add("playing");
+    }, { once: true });
+
+    document.addEventListener("touchstart", function () {
+        const bgm = document.getElementById("bgm");
+        if (bgm.paused) bgm.play();
+    }, { once: true });
+
+    function toggleMusic() {
+        let audio = document.getElementById("bgm");
+        let btn = document.querySelector(".music button");
+
+        if (audio.paused) {
+            audio.play();
+            btn.classList.add("playing");   // ★ 加上旋转
+        } else {
+            audio.pause();
+            btn.classList.remove("playing"); // ★ 停止旋转
+        }
+    }
+
+</script>
+
+</body>
+</html>
